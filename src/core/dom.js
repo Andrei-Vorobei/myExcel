@@ -58,7 +58,6 @@ class Dom {
 	}
 
 	css(styles = {}) {
-		// Object.keys(styles).forEach(style => this.$el.style[style] = styles[style]);
 		Object.assign(this.$el.style, styles);
 	}
 }
