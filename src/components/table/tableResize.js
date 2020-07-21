@@ -4,7 +4,7 @@ export const resizeTable = ($root, event) => {
 	const $resizer = $(event.target);
 	const $parent = $resizer.closest('[data-type="resizable"]');
 	const coords = $parent.getCoords();
-	let value;
+	let value = null;
 
 	if (event.target.dataset.resize === 'col') {
 		$resizer.css({
@@ -29,11 +29,12 @@ export const resizeTable = ($root, event) => {
 					'width': `${value}px`
 				})
 			);
+
 			$resizer.css({
 				opacity: '',
+				width: '',
 				bottom: '',
-				left: '',
-				width: ''
+				left: ''
 			});
 		};
 	} else if (event.target.dataset.resize === 'row') {
@@ -42,23 +43,27 @@ export const resizeTable = ($root, event) => {
 			right: '-5000px',
 			height: '2px'
 		});
+
 		document.onmousemove = (e) => {
 			const delta = e.pageY - coords.bottom;
 			value = coords.height + delta;
+
 			$resizer.css({
 				top: value + 'px',
 			});
 		};
+
 		document.onmouseup = () => {
 			document.onmousemove = null;
 			$parent.css({
 				'height': `${value}px`,
 			});
+
 			$resizer.css({
 				opacity: '',
-				right: '',
 				height: '',
-				bottom: ''
+				right: '',
+				top: ''
 			});
 		};
 	}

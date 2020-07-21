@@ -4,10 +4,17 @@ const CODES = {
 };
 // const rows = [];
 
-function toCell(_, col) {
-	return `
-		<div class="cell" contenteditable data-col="${col}"></div>
-	`;
+function toCell(row) {
+	return function(_, col) {
+		return `
+			<div
+				class="cell"
+				contenteditable
+				data-col="${col}"
+				data-id="${row}:${col}"
+			></div>
+		`;
+	};
 }
 
 function toColumn(col, index) {
@@ -20,13 +27,13 @@ function toColumn(col, index) {
 }
 
 function createRow(content, rowIndex = '') {
-	const resizer = rowIndex ? `data-resize="row"` : '';
+	const resizer = rowIndex ? `<div class="row-resize" data-resize="row"></div>` : '';
 	const resizable = rowIndex ? `data-type="resizable"` : '';
 	return `
 		<div class="row" ${resizable}>
 			<div class="row-info">
 				${rowIndex}
-				<div class="row-resize" ${resizer}></div>
+				${resizer}
 			</div>
 			<div class="row-data">${content}</div>
 		</div>
@@ -49,13 +56,13 @@ export function createTable(rowsCount = 15) {
 
 	rows.push(createRow(cols));
 
-	for (let i = 0; i < rowsCount; i++) {
+	for (let row = 0; row < rowsCount; row++) {
 		const cells = new Array(colsCount)
 			.fill('')
-			.map(toCell)
+			.map(toCell(row))
 			.join('');
 
-		rows.push(createRow(cells, i + 1));
+		rows.push(createRow(cells, row + 1));
 	}
 
 	return rows.join('');
