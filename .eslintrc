@@ -13,7 +13,9 @@
 		"eol-last": "off",
 		"comma-dangle": "off",
 		"arrow-parens": "off",
-		"max-len": "off"
+		"max-len": "off",
+		"object-curly-spacing": "off",
+		"no-fallthrough": "off"
 	},
 	"extends": ["eslint:recommended", "google"]
 }
