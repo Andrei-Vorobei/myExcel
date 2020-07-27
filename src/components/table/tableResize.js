@@ -1,70 +1,89 @@
-import {$} from '@core/dom';
+import { $ } from '@core/dom';
 
 export const resizeTable = ($root, event) => {
-	const $resizer = $(event.target);
-	const $parent = $resizer.closest('[data-type="resizable"]');
-	const coords = $parent.getCoords();
-	let value = null;
+	return new Promise(resolve => {
+		const $resizer = $(event.target);
+		const $parent = $resizer.closest('[data-type="resizable"]');
+		const coords = $parent.getCoords();
+		let value = null;
+		const typeResize = event.target.dataset.resize;
 
-	if (event.target.dataset.resize === 'col') {
-		$resizer.css({
-			opacity: 1,
-			bottom: '-5000px',
-			width: '2px'
-		});
+		switch (typeResize) {
+			case 'col':
+				$resizer.css({
+					opacity: 1,
+					bottom: '-5000px',
+					width: '2px'
+				});
 
-		document.onmousemove = (e) => {
-			const delta = e.pageX - coords.right;
-			value = coords.width + delta;
+				document.onmousemove = (e) => {
+					const delta = e.pageX - coords.right;
+					value = coords.width + delta;
 
-			$resizer.css({
-				left: value + 'px',
-			});
-		};
+					$resizer.css({
+						left: value + 'px',
+					});
+				};
 
-		document.onmouseup = () => {
-			document.onmousemove = null;
-			$root.findAll(`[data-col="${$parent.data.col}"]`)
-				.forEach(cell => $(cell).css({
-					'width': `${value}px`
-				})
-			);
+				document.onmouseup = () => {
+					document.onmousemove = null;
+					$root.findAll(`[data-col="${$parent.data.col}"]`)
+						.forEach(cell => $(cell).css({
+							'width': `${value}px`
+						})
+					);
 
-			$resizer.css({
-				opacity: '',
-				width: '',
-				bottom: '',
-				left: ''
-			});
-		};
-	} else if (event.target.dataset.resize === 'row') {
-		$resizer.css({
-			opacity: 1,
-			right: '-5000px',
-			height: '2px'
-		});
+					$resizer.css({
+						opacity: '',
+						width: '',
+						bottom: '',
+						left: ''
+					});
 
-		document.onmousemove = (e) => {
-			const delta = e.pageY - coords.bottom;
-			value = coords.height + delta;
+					resolve({
+						typeResize,
+						value,
+						id: $parent.data[typeResize]
+					});
+				};
+				break;
 
-			$resizer.css({
-				top: value + 'px',
-			});
-		};
+			case 'row':
+				$resizer.css({
+					opacity: 1,
+					right: '-5000px',
+					height: '2px'
+				});
 
-		document.onmouseup = () => {
-			document.onmousemove = null;
-			$parent.css({
-				'height': `${value}px`,
-			});
+				document.onmousemove = (e) => {
+					const delta = e.pageY - coords.bottom;
+					value = coords.height + delta;
 
-			$resizer.css({
-				opacity: '',
-				height: '',
-				right: '',
-				top: ''
-			});
-		};
-	}
+					$resizer.css({
+						top: value + 'px',
+					});
+				};
+
+				document.onmouseup = () => {
+					document.onmousemove = null;
+					$parent.css({
+						'height': `${value}px`,
+					});
+
+					$resizer.css({
+						opacity: '',
+						height: '',
+						right: '',
+						top: ''
+					});
+
+					resolve({
+						typeResize,
+						value,
+						id: $parent.data[typeResize]
+					});
+				};
+				break;
+		}
+	});
 };
